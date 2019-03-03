@@ -16,8 +16,9 @@ fn main() {
     let mut counts: HashMap<i32, i32> = HashMap::new();
     let mut totals = BinaryHeap::new();
 
-    for i in 0..limit_3_root {
+    for i in 1..limit_3_root {
         cubes.push((i as i32).pow(3));
+        // println!("{},{}", i, (i as i32).pow(3));
     }
 
     let end = cubes.len();
@@ -42,7 +43,7 @@ fn main() {
         let mut i = vec.len();
         while i >= 1 {
             i -= 1;
-            if vec[i] < limit && counts[&vec[i]] >= 2 {
+            if vec[i] <= limit && counts[&vec[i]] >= 2 {
                 println!("{}", vec[i]);
                 found = true;
                 break;

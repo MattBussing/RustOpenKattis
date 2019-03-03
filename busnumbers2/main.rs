@@ -1,54 +1,56 @@
 // https://open.kattis.com/problems/busnumbers2
+// psuedo code:
+//get cubes up to the limit
+// add every combo of cubes and put them in a list (number and count)
+// find the largest pair and return that
+
+use std::collections::BinaryHeap;
+use std::collections::HashMap;
 
 use std::io;
 
-// warning this is wrong!!!
-
 fn main() {
-    let mut found_limit = 0;
-    let upper_limit = get_int();
+    let limit = get_int();
     let mut cubes: Vec<i32> = Vec::new();
-    let cube_root: i32 = (upper_limit as f64).powf(1.0 / 3.0).ceil() as i32;
-    // let mut pair_1 = (-1, -1);
-    // let mut pair_2 = (-1, -1);
+    let limit_3_root: i32 = (limit as f64).powf(1.0 / 3.0).ceil() as i32;
+    let mut counts: HashMap<i32, i32> = HashMap::new();
+    let mut totals = BinaryHeap::new();
 
-    let mut flag = false;
-    let mut double_flag = false;
-    let mut pairs: Vec<(i32)> = Vec::new();
+    for i in 0..limit_3_root {
+        cubes.push((i as i32).pow(3));
+    }
 
-    for i in 0..cube_root {
-        let possible = (i as i32).pow(3);
-        // println!("i{} {}", i, possible);
-        cubes.push(possible);
-        let mut j = cubes.len() - 1;
-        loop {
-            // println!("temp, {},{}", temp, upper_limit);
-            let temp = cubes[j] + possible;
-            if temp < upper_limit {
-                if temp == found_limit {
-                    if flag == true {
-                        // pairs.push((cubes[j]))
-                        // println!("aaah");
-                        // double_flag = true;
-                    }
-                    flag = true;
-                } else if temp < found_limit {
-                    break;
-                } else {
-                    found_limit = temp;
-                    // pair_1 = (possible, cubes[j]);
-                    flag = false;
-                    double_flag = false;
+    let end = cubes.len();
+    for i in 0..end {
+        for j in (i + 1)..end {
+            let temp = cubes[i] + cubes[j];
+            if counts.contains_key(&temp) {
+                if let Some(count) = counts.get_mut(&temp) {
+                    *count += 1;
                 }
+            } else {
+                counts.insert(temp, 1);
+                totals.push(temp);
             }
-            if j <= 0 {
-                break;
-            }
-            j -= 1;
         }
     }
-    if !double_flag && flag {
-        println!("{}", pair_1.0 + pair_1.1);
+
+    let vec = totals.into_sorted_vec();
+
+    if vec.len() > 0 {
+        let mut i = vec.len();
+        let mut found = false;
+        while i >= 1 {
+            i -= 1;
+            if vec[i] < limit && counts[&vec[i]] >= 2 {
+                println!("{}", vec[i]);
+                found = true;
+                break;
+            }
+        }
+        if !found {
+            println!("none");
+        }
     } else {
         println!("none");
     }

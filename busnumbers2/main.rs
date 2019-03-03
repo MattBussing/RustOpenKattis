@@ -37,9 +37,9 @@ fn main() {
 
     let vec = totals.into_sorted_vec();
 
+    let mut found = false;
     if vec.len() > 0 {
         let mut i = vec.len();
-        let mut found = false;
         while i >= 1 {
             i -= 1;
             if vec[i] < limit && counts[&vec[i]] >= 2 {
@@ -48,10 +48,8 @@ fn main() {
                 break;
             }
         }
-        if !found {
-            println!("none");
-        }
-    } else {
+    }
+    if !found {
         println!("none");
     }
 }

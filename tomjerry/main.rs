@@ -36,21 +36,6 @@ fn main() {
         cheese.insert((j - 1, i - 1));
     }
 
-    // println!("cheese: {:?}", cheese);
-
-    // test
-    // // println!("{},{},{}", h, w, _number_cases);
-
-    // create dp table
-    // let mut count: Vec<Vec<(i32, i32)>> = Vec::new();
-    // for _i in 0..h {
-    //     let mut temp = Vec::new();
-    //     for _j in 0..w {
-    //         temp.push((0, 0));
-    //     }
-    //     count.push(temp);
-    // }
-
     // since input can be up to 50,000
     // we will store rows since we go up by row
     // and don't need to remeber the last one

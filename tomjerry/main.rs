@@ -34,28 +34,30 @@ fn main() {
         let mut iter = string.split_whitespace();
         let x: i32 = iter.next().unwrap().parse().unwrap();
         let y: i32 = iter.next().unwrap().parse().unwrap();
-        println!("");
-        // n choose k
-        // translates x and y coordinates into pascal triangle coordinates
-        let k = w - x;
-        let n = k + y - 1;
-        println!("down{},{}", n, k);
-        let j = x - 1;
-        let i = k - 1;
-        println!("up{},{}", i, j);
-        cheese.push(((n, k), (i, j)));
+        cheese.push((x, y));
     }
-    let mut set = HashSet::new();
-    let mut map = HashMap::new();
-    map.insert((0 as u32, 0 as u32), 1 as u32);
-    set.insert((0 as u32, 0 as u32));
-    for i in cheese {
+
+    cheese.sort();
+    for i in 0..cheese.len() {
         println!(
-            "binoms{} {}",
-            binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
-            binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
+            "for loop: binoms{} {}",
+            cheese[i].0,
+            cheese[i].1 // binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
+                        // binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
         );
+        let mut j: i32 = i as i32 - 1;
+        let subtrahend = 0;
+        while j >= 0 {
+            println!(
+                "binoms{} {}",
+                cheese[j as usize].0,
+                cheese[j as usize].1 // binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
+                                     // binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
+            );
+            j -= 1;
+        }
     }
+
     // println!(
     //     "{}",
     //     binom(cheese[0].0 as u32, cheese[0].1 as u32, &mut set, &mut map)

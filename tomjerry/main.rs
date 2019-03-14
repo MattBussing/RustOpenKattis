@@ -1,7 +1,10 @@
 // https://open.kattis.com/problems/tomjerry
-// dynamic programming challenge
+// this is pascal's triangle
 
+use std::collections::HashMap;
 use std::collections::HashSet;
+use std::ops::{Index, IndexMut};
+
 use std::io;
 
 fn main() {
@@ -25,7 +28,7 @@ fn main() {
     let _number_cases: i32 = iter.next().unwrap().parse().unwrap();
 
     // get all the cheese
-    let mut cheese = HashSet::new();
+    let mut cheese = Vec::new();
     for _i in 0.._number_cases {
         let mut string = String::new();
         io::stdin().read_line(&mut string).ok().expect("read error");
@@ -33,89 +36,83 @@ fn main() {
         let i: i32 = iter.next().unwrap().parse().unwrap();
         let j: i32 = iter.next().unwrap().parse().unwrap();
         // // println!("{},{}", i, j);
-        cheese.insert((j - 1, i - 1));
+        cheese.push((j - 1, i - 1));
     }
-
-    // since input can be up to 50,000
-    // we will store rows since we go up by row
-    // and don't need to remeber the last one
-    // problem is c, r but we will index r, c
-    // (cheese, non-cheese)
-    let mut previous: Vec<(i32, i32)> = Vec::new();
-    for _j in 0..w {
-        previous.push((0, 0));
-    }
-    let mut i = h - 1;
-    while i >= 0 {
-        let mut current: Vec<(i32, i32)> = Vec::new();
-        for _j in 0..w {
-            current.push((0, 0));
-        }
-        let mut j = w - 1;
-        while j >= 0 {
-            // println!("{},{}", i, j);
-            if i == h - 1 && j == w - 1 {
-                // println!("&&");
-                if cheese.contains(&(i, j)) {
-                    current[j as usize] = (1, 0);
-                } else {
-                    current[j as usize] = (0, 1);
-                }
-            } else if i == h - 1 {
-                // println!("h");
-
-                if cheese.contains(&(i, j)) {
-                    // println!("chees");
-                    // add the cell to the right and the one below
-                    // move all into cheese cell
-                    current[j as usize] =
-                        (current[(j + 1) as usize].0 + current[(j + 1) as usize].1, 0);
-                } else {
-                    current[j as usize] = current[(j + 1) as usize]
-                }
-            } else if j == w - 1 {
-                // println!("w");
-                if cheese.contains(&(i, j)) {
-                    // println!("chees");
-                    // add the cell to the right and the one below
-                    // move all into cheese cell
-                    current[j as usize] = (previous[j as usize].0 + previous[j as usize].1, 0);
-                } else {
-                    current[j as usize] = previous[j as usize]
-                }
-            } else {
-                if cheese.contains(&(i, j)) {
-                    // add the cell to the right and the one below
-                    // move all into cheese cell
-                    current[j as usize] = (
-                        (current[(j + 1) as usize].0
-                            + current[(j + 1) as usize].1
-                            + previous[j as usize].0
-                            + previous[j as usize].1)
-                            % 1000000007,
-                        0,
-                    );
-                } else {
-                    current[j as usize] = (
-                        (current[(j + 1) as usize].0 + previous[j as usize].0) % 1000000007,
-                        (current[(j + 1) as usize].1 + previous[j as usize].1) % 1000000007,
-                    );
-                }
-            }
-            j -= 1;
-        }
-        previous = current;
-        i -= 1;
-    }
-    // // println!()
-
-    // for i in 0..h as usize {
-    //     for j in 0..w as usize {
-    //         print!("{},{}|", count[i][j].0, count[i][j].1);
-    //     }
-    //     print!("\n\n");
-    // }
-    println!("{}", previous[0].0);
+    let mut lookup_table = table::new();
+    lookup_table[(0, 0)] = 1;
+    println!(
+        "{}",
+        binom(cheese[0].0 as u32, cheese[0].1 as u32, lookup_table)
+    );
 }
 
-// fn
+// struct table<'a> {
+//     map: &'a mut HashMap<(u32, u32), u32>,
+//     set: &'a mut HashSet<(u32, u32)>,
+// }
+//
+// impl table<'a> {
+//     fn new() -> table<'a> {
+//         table {
+//             map: &'a HashMap::new(),
+//             set: &'a HashSet::new(),
+//         }
+//     }
+// }
+struct table {
+    map: HashMap<(u32, u32), u32>,
+    set: HashSet<(u32, u32)>,
+}
+
+impl table {
+    fn new() -> table {
+        table {
+            map: HashMap::new(),
+            set: HashSet::new(),
+        }
+    }
+}
+
+trait Contains {
+    fn contains(&self, tuple: (u32, u32)) -> bool;
+    fn get(&self, tuple: (u32, u32)) -> u32;
+}
+impl Contains for table {
+    fn contains(&self, tuple: (u32, u32)) -> bool {
+        return self.set.contains(&tuple);
+    }
+    fn get(&self, tuple: (u32, u32)) -> u32 {
+        return self.map[&tuple];
+    }
+}
+impl Index<(u32, u32)> for table {
+    type Output = u32;
+    fn index(& self, tuple: (u32, u32)) -> &Self::Output {
+        self.set.insert(tuple);
+        return &self.map[&tuple];
+    }
+}
+impl IndexMut<(u32, u32)> for table {
+    // type Output = u32;
+    fn index_mut<'a>(&'a mut self, tuple: (u32, u32)) -> &'a mut u32 {
+        self.set.insert(tuple);
+        return &mut self.map[&tuple];
+    }
+}
+// impl table {
+//     fn new(&self) {
+//         self.map = HashMap::new();
+//         self.set = HashSet::new();
+//     }
+// }
+
+fn binom(n: u32, k: u32, set:HashSet, map:HashMap) -> u32 {
+    // n choose k
+    if !lookup_table.contains((n, k)) {
+        if k == 0 || k == n {
+            return 1;
+        }
+        lookup_table[(n, k)] = binom(n - 1, k - 1, lookup_table) + binom(n - 1, k, lookup_table);
+    }
+    return lookup_table[(n, k)];
+}

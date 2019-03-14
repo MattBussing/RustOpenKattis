@@ -1,5 +1,5 @@
 // https://open.kattis.com/problems/tomjerry
-// dynamic programming challenge
+// this is pascal's triangle
 
 use std::collections::HashSet;
 use std::io;
@@ -36,33 +36,30 @@ fn main() {
         cheese.insert((j - 1, i - 1));
     }
 
-    // println!("cheese: {:?}", cheese);
-
-    // test
-    // // println!("{},{},{}", h, w, _number_cases);
-
-    // create dp table
-    let mut count: Vec<Vec<(i32, i32)>> = Vec::new();
-    for _i in 0..h {
-        let mut temp = Vec::new();
-        for _j in 0..w {
-            temp.push((0, 0));
-        }
-        count.push(temp);
-    }
+    // since input can be up to 50,000
+    // we will store rows since we go up by row
+    // and don't need to remeber the last one
     // problem is c, r but we will index r, c
     // (cheese, non-cheese)
+    let mut previous: Vec<(i32, i32)> = Vec::new();
+    for _j in 0..w {
+        previous.push((0, 0));
+    }
     let mut i = h - 1;
     while i >= 0 {
+        let mut current: Vec<(i32, i32)> = Vec::new();
+        for _j in 0..w {
+            current.push((0, 0));
+        }
         let mut j = w - 1;
         while j >= 0 {
             // println!("{},{}", i, j);
             if i == h - 1 && j == w - 1 {
                 // println!("&&");
                 if cheese.contains(&(i, j)) {
-                    count[i as usize][j as usize] = (1, 0);
+                    current[j as usize] = (1, 0);
                 } else {
-                    count[i as usize][j as usize] = (0, 1);
+                    current[j as usize] = (0, 1);
                 }
             } else if i == h - 1 {
                 // println!("h");
@@ -71,13 +68,10 @@ fn main() {
                     // println!("chees");
                     // add the cell to the right and the one below
                     // move all into cheese cell
-                    count[i as usize][j as usize] = (
-                        count[i as usize][(j + 1) as usize].0
-                            + count[i as usize][(j + 1) as usize].1,
-                        0,
-                    );
+                    current[j as usize] =
+                        (current[(j + 1) as usize].0 + current[(j + 1) as usize].1, 0);
                 } else {
-                    count[i as usize][j as usize] = count[i as usize][(j + 1) as usize]
+                    current[j as usize] = current[(j + 1) as usize]
                 }
             } else if j == w - 1 {
                 // println!("w");
@@ -85,36 +79,32 @@ fn main() {
                     // println!("chees");
                     // add the cell to the right and the one below
                     // move all into cheese cell
-                    count[i as usize][j as usize] = (
-                        count[(i + 1) as usize][j as usize].0
-                            + count[(i + 1) as usize][j as usize].1,
-                        0,
-                    );
+                    current[j as usize] = (previous[j as usize].0 + previous[j as usize].1, 0);
                 } else {
-                    count[i as usize][j as usize] = count[(i + 1) as usize][j as usize]
+                    current[j as usize] = previous[j as usize]
                 }
             } else {
                 if cheese.contains(&(i, j)) {
                     // add the cell to the right and the one below
                     // move all into cheese cell
-                    count[i as usize][j as usize] = (
-                        count[i as usize][(j + 1) as usize].0
-                            + count[i as usize][(j + 1) as usize].1
-                            + count[(i + 1) as usize][j as usize].0
-                            + count[(i + 1) as usize][j as usize].1,
+                    current[j as usize] = (
+                        (current[(j + 1) as usize].0
+                            + current[(j + 1) as usize].1
+                            + previous[j as usize].0
+                            + previous[j as usize].1)
+                            % 1000000007,
                         0,
                     );
                 } else {
-                    count[i as usize][j as usize] = (
-                        count[i as usize][(j + 1) as usize].0
-                            + count[(i + 1) as usize][j as usize].0,
-                        count[i as usize][(j + 1) as usize].1
-                            + count[(i + 1) as usize][j as usize].1,
+                    current[j as usize] = (
+                        (current[(j + 1) as usize].0 + previous[j as usize].0) % 1000000007,
+                        (current[(j + 1) as usize].1 + previous[j as usize].1) % 1000000007,
                     );
                 }
             }
             j -= 1;
         }
+        previous = current;
         i -= 1;
     }
     // // println!()
@@ -125,7 +115,7 @@ fn main() {
     //     }
     //     print!("\n\n");
     // }
-    println!("{}", count[0][0].0);
+    println!("{}", previous[0].0);
 }
 
 // fn

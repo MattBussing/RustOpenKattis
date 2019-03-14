@@ -3,7 +3,6 @@
 
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::ops::{Index, IndexMut};
 
 use std::io;
 
@@ -33,86 +32,49 @@ fn main() {
         let mut string = String::new();
         io::stdin().read_line(&mut string).ok().expect("read error");
         let mut iter = string.split_whitespace();
-        let i: i32 = iter.next().unwrap().parse().unwrap();
-        let j: i32 = iter.next().unwrap().parse().unwrap();
-        // // println!("{},{}", i, j);
-        cheese.push((j - 1, i - 1));
+        let x: i32 = iter.next().unwrap().parse().unwrap();
+        let y: i32 = iter.next().unwrap().parse().unwrap();
+        println!("");
+        // n choose k
+        // translates x and y coordinates into pascal triangle coordinates
+        let k = w - x;
+        let n = k + y - 1;
+        println!("down{},{}", n, k);
+        let j = x - 1;
+        let i = k - 1;
+        println!("up{},{}", i, j);
+        cheese.push(((n, k), (i, j)));
     }
-    let mut lookup_table = table::new();
-    lookup_table[(0, 0)] = 1;
-    println!(
-        "{}",
-        binom(cheese[0].0 as u32, cheese[0].1 as u32, lookup_table)
-    );
+    let mut set = HashSet::new();
+    let mut map = HashMap::new();
+    map.insert((0 as u32, 0 as u32), 1 as u32);
+    set.insert((0 as u32, 0 as u32));
+    for i in cheese {
+        println!(
+            "binoms{} {}",
+            binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
+            binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
+        );
+    }
+    // println!(
+    //     "{}",
+    //     binom(cheese[0].0 as u32, cheese[0].1 as u32, &mut set, &mut map)
+    // );
 }
 
-// struct table<'a> {
-//     map: &'a mut HashMap<(u32, u32), u32>,
-//     set: &'a mut HashSet<(u32, u32)>,
-// }
-//
-// impl table<'a> {
-//     fn new() -> table<'a> {
-//         table {
-//             map: &'a HashMap::new(),
-//             set: &'a HashSet::new(),
-//         }
-//     }
-// }
-struct table {
-    map: HashMap<(u32, u32), u32>,
-    set: HashSet<(u32, u32)>,
-}
-
-impl table {
-    fn new() -> table {
-        table {
-            map: HashMap::new(),
-            set: HashSet::new(),
-        }
-    }
-}
-
-trait Contains {
-    fn contains(&self, tuple: (u32, u32)) -> bool;
-    fn get(&self, tuple: (u32, u32)) -> u32;
-}
-impl Contains for table {
-    fn contains(&self, tuple: (u32, u32)) -> bool {
-        return self.set.contains(&tuple);
-    }
-    fn get(&self, tuple: (u32, u32)) -> u32 {
-        return self.map[&tuple];
-    }
-}
-impl Index<(u32, u32)> for table {
-    type Output = u32;
-    fn index(& self, tuple: (u32, u32)) -> &Self::Output {
-        self.set.insert(tuple);
-        return &self.map[&tuple];
-    }
-}
-impl IndexMut<(u32, u32)> for table {
-    // type Output = u32;
-    fn index_mut<'a>(&'a mut self, tuple: (u32, u32)) -> &'a mut u32 {
-        self.set.insert(tuple);
-        return &mut self.map[&tuple];
-    }
-}
-// impl table {
-//     fn new(&self) {
-//         self.map = HashMap::new();
-//         self.set = HashSet::new();
-//     }
-// }
-
-fn binom(n: u32, k: u32, set:HashSet, map:HashMap) -> u32 {
+fn binom(n: u32, k: u32, set: &mut HashSet<(u32, u32)>, map: &mut HashMap<(u32, u32), u32>) -> u32 {
     // n choose k
-    if !lookup_table.contains((n, k)) {
+    // nth row and kth column
+    // println!("{},{}", n, k);
+    let mut x = 0;
+    if !set.contains(&(n, k)) {
         if k == 0 || k == n {
             return 1;
         }
-        lookup_table[(n, k)] = binom(n - 1, k - 1, lookup_table) + binom(n - 1, k, lookup_table);
+        x = binom(n - 1, k - 1, set, map) + binom(n - 1, k, set, map);
+        // map[&(n, k)] = x;
+        map.insert((n, k), x);
+        set.insert((n, k));
     }
-    return lookup_table[(n, k)];
+    return x;
 }

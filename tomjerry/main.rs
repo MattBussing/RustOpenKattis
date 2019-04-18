@@ -49,10 +49,15 @@ fn main() {
         let subtrahend = 0;
         while j >= 0 {
             println!(
-                "binoms{} {}",
+                "ij{} {}",
                 cheese[j as usize].0,
                 cheese[j as usize].1 // binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
                                      // binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
+            );
+            println!(
+                "binoms{} {}",
+                binom((i.0).0 as u32, (i.0).1 as u32, &mut set, &mut map),
+                binom((i.1).0 as u32, (i.1).1 as u32, &mut set, &mut map)
             );
             j -= 1;
         }
@@ -64,19 +69,12 @@ fn main() {
     // );
 }
 
-fn binom(n: u32, k: u32, set: &mut HashSet<(u32, u32)>, map: &mut HashMap<(u32, u32), u32>) -> u32 {
+fn binom(n: u32, k: u32) -> u32 {
     // n choose k
     // nth row and kth column
     // println!("{},{}", n, k);
-    let mut x = 0;
-    if !set.contains(&(n, k)) {
-        if k == 0 || k == n {
-            return 1;
-        }
-        x = binom(n - 1, k - 1, set, map) + binom(n - 1, k, set, map);
-        // map[&(n, k)] = x;
-        map.insert((n, k), x);
-        set.insert((n, k));
-    }
+    let mut x = 
+
+
     return x;
 }

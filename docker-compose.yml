@@ -8,8 +8,8 @@ services:
     # command: cargo run
     volumes:
       - .:/usr/src/myapp
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+    # command: /bin/bash
+    # stdin_open: true
+    # tty: true
     environment:
       RUST_BACKTRACE: 1

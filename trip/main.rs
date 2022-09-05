@@ -8,7 +8,8 @@ use std::{
 };
 
 fn main() {
-    let mut stdin: StdinLock = io::stdin().lock();
+    let stdin1 = io::stdin();
+    let mut stdin: StdinLock = stdin1.lock();
     main3(&mut stdin, &mut io::stdout());
 }
 
@@ -28,25 +29,39 @@ fn main3(my_stdin: &mut impl BufRead, output: &mut impl Write) {
         // Get inputs into an array.
         let mut vec: Vec<f32> = Vec::new();
         for _ in 0..(num_people) {
-            vec.push(get_single_item::<f32>(my_stdin));
+            vec.push(get_single_item(my_stdin));
         }
 
         // sort the array
         vec.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Equal));
 
-        // get the average.
-        let mut average: f32 = 0.0;
-        for i in vec.iter() {
-            average += i;
+        // let mut vec: Vec<f32> = Vec::new();
+        // for i in vec.iter() {
+        //     average += i;
+        // }
+        // average = average / num_people as f32;
+
+        // Divide out the money.
+        // This will be a vector representing how much we give each person.
+        let mut division: Vec<f32> = Vec::new();
+        let mut divider = num_people;
+        let mut total: f32 = vec.iter().sum();
+        while divider > 0 {
+            let mut amount: f32 = total / divider as f32;
+            amount = amount.round();
+
+            division.push(amount);
+            total -= amount;
+            divider -= 1;
         }
-        average = average / num_people as f32;
 
         // Get the ammount needed to transfer.
         // I think we can only look at the bottom half.
         let mut total_money_transferred: f32 = 0.0;
-        for i in vec.iter() {
-            if i < &average {
-                total_money_transferred += average - i;
+        for (pos, e) in vec.iter().enumerate() {
+            let desired: f32 = division[pos];
+            if e < &desired {
+                total_money_transferred += desired - e;
             }
         }
 

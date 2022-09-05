@@ -3,21 +3,32 @@
 use std::io;
 
 fn main() {
-    let mut first_input = String::new();
-    io::stdin()
-        .read_line(&mut first_input)
-        .ok()
-        .expect("read error");
-    println!("first_input={}", first_input);
-    let x: i32 = first_input.parse().unwrap();
-    println!("x={}", x);
+    // print!("please type the number of items you plan on giving: ");
 
-    // for i in 1..(x + 1) {
-    //     let mut _number_cases = String::new();
-    //     io::stdin()
-    //         .read_line(&mut _number_cases)
-    //         .ok()
-    //         .expect("read error");
-    // }
-    // println!("{}", y);
+    let x: u32 = get_single_item_stdin();
+    // println!("x={}", x);
+
+    let mut total = 0;
+    for _ in 0..(x) {
+        let i: u32 = get_single_item_stdin();
+        // 212 becomes 21^2
+        let power: u32 = i % 10;
+        let base: u32 = i / 10;
+
+        total += base.pow(power);
+    }
+
+    println!("{}", total);
+}
+
+fn get_single_item_stdin() -> u32 {
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+    // println!("input={}", input);
+    let x: u32 = input.trim().parse().expect("Input not an integer");
+    // println!("x={}", x);
+
+    return x;
 }

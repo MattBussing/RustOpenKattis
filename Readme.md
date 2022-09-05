@@ -12,6 +12,8 @@ When you run this command it will open an interactive shell in which you can run
 
  `cargo fmt`
 
+ `cargo fmt && cargo build && cargo run`
+
 # todo
 
 get vscode highlighting with docker container

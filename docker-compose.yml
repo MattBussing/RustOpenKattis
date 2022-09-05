@@ -11,3 +11,5 @@ services:
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
+    environment:
+      RUST_BACKTRACE: 1

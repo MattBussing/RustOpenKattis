@@ -4,5 +4,6 @@ version = "0.1.0"
 authors = ["Matt <mbussing44@gmail.com>"]
 
 [[bin]]
-name = "pot"
-path = "pot/main.rs"
+name = "trip"
+path = "trip/main.rs"
+

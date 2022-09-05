@@ -14,6 +14,9 @@ When you run this command it will open an interactive shell in which you can run
 
  `cargo fmt && cargo build && cargo run`
 
+ # VSCode Container Dev
+ https://code.visualstudio.com/docs/remote/containers
+
 # todo
 
 get vscode highlighting with docker container

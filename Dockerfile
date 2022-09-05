@@ -1,6 +1,6 @@
-FROM rust:1.31
+FROM rust:1.63
 
 WORKDIR /usr/src/myapp
 COPY . .
 
-# RUN cargo build
+RUN rustup component add rustfmt

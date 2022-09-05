@@ -4,5 +4,10 @@ services:
   kattis:
     image: kattis
     build: .
-    command: ls -R
+    # command: ls -R
     # command: cargo run
+    volumes:
+      - .:/usr/src/myapp
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true

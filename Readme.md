@@ -14,6 +14,8 @@ When you run this command it will open an interactive shell in which you can run
 
  `cargo fmt && cargo build && cargo run`
 
+ `cargo test`
+
  # VSCode Container Dev
  https://code.visualstudio.com/docs/remote/containers
 

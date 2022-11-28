@@ -13,3 +13,4 @@ services:
     # tty: true
     environment:
       RUST_BACKTRACE: 1
+
